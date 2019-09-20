@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="3 seconds">
+	<property file="./conf/config.properties" />
+	
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<encoder>
+			<pattern>[%d{HH:mm:ss.SSS}][%thread][%-5level][%M] (%file:%line\) %msg%n%ex{full}</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILE" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>discriminator</key>
+            <defaultValue>main</defaultValue>
+        </discriminator>        
+        <sift>
+            <appender name="${discriminator}_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<fileNamePattern>./log/${discriminator}_%d{yyyyMMdd}.log</fileNamePattern>
+				</rollingPolicy>
+				<encoder>
+					<pattern>[%d{HH:mm:ss.SSS}][%thread][%-5level][%M] (%file:%line\) %msg%n%ex{full}</pattern>
+				</encoder>
+			</appender>
+        </sift>
+    </appender>
+
+	<root level="${ts.log.level}">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE" />
+	</root>
+
+</configuration>
